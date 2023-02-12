@@ -13,13 +13,13 @@
     <script src="https://unpkg.com/@jspsych/plugin-webgazer-calibrate@1.0.2"></script>
     <script src="https://unpkg.com/@jspsych/plugin-webgazer-validate@1.0.2"></script>
     <script src="https://unpkg.com/@jspsych/extension-webgazer@1.0.2"></script>
-    <script src="https://cdn.jsdelivr.net/gh/jspsych/jsPsych@jspsych@7.3.1/examples/js/webgazer/webgazer.js"></script>
-    <script src="https://pavlovia.org/lib/jspsych-7-pavlovia-2022.1.1.js"></script>
-    <script src="jquery-3.6.1.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.2.3/css/jspsych.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/jspsych/jspsych@jspsych@7.0.0/examples/js/webgazer/webgazer.js"></script>
+    <script src="https://lib.pavlovia.org/jspsych-7-pavlovia-2022.1.1.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.1/css/jspsych.css"/>
     
     <style> 
-    .instruction {text-align: center; font-family: sans-serif; font-size: 22px; line-height: 1.2;}
+    .heading {text-align:center; font-family:sans-serif; font-size: 22px}
+    .instruction {text-align: center; font-family: sans-serif; font-size: 18px}
     .jspsych-btn {background-color: #FFFFFF; border: 1px solid #222222; border-radius: 8px; box-sizing: border-box; 
     color: #222222; cursor: pointer; display: inline-block; font-size: 24px; font-weight: 600; text-align: center; 
     text-decoration: none; touch-action: manipulation; transition: box-shadow .2s,-ms-transform .1s,-webkit-transform .1s,transform .1s;}
@@ -27,6 +27,8 @@
     *::-webkit-media-controls-start-playback-button {display: none!important; -webkit-appearance: none;}
     *::-webkit-media-controls-panel {display: none!important; -webkit-appearance: none;}
     .center {display: flex; justify-content: center; align-items: center; margin: auto;}
+    .emoji_color {font-size: 5em;}
+    .emoji_gray {font-size: 5em; -webkit-filter: grayscale(100%); filter: grayscale(100%);}
     </style>
   </head>
   <body>
@@ -35,10 +37,13 @@
 /*************************************************/
 /** Visual Perception of Human and Robot Action **/
 /*************************************************/
+// License: CC-BY 4.0
+// Updated by Freda Wan
 
-window.addEventListener('beforeunload', function (event) {
-  event.stopImmediatePropagation();
-});
+// this stops the "Leave Site? Your data will not be saved." warning when the experiment redirects to the questionnaire
+ window.addEventListener('beforeunload', function (event) {
+   event.stopImmediatePropagation();
+ });
 
 // Connect with Pavlovia. 
         var pavlovia_init = {
@@ -52,7 +57,6 @@ window.addEventListener('beforeunload', function (event) {
 
 
 // Browser check is implemented to exclude participants using mobile. 
-// TODO: Test with mobile. 
         var browser_check = {
           type: jsPsychBrowserCheck,
           inclusion_function: (data) => {
@@ -66,6 +70,7 @@ window.addEventListener('beforeunload', function (event) {
         }; 
 
 // JSPSych Webgazer extension open.
+// on_finish function adds an extra last screen and 8-second buffer, to make absolutely sure that data is stored on the server
       var jsPsych = initJsPsych({
           show_progress_bar: false,
           extensions: [
@@ -78,7 +83,6 @@ window.addEventListener('beforeunload', function (event) {
           }
           });
 
-
 // create timeline
       var pavlovia_init = {
         type: jsPsychPavlovia, 
@@ -90,7 +94,7 @@ window.addEventListener('beforeunload', function (event) {
     'vid/Milo_bio_correctv2.mp4', 'vid/Milo_nonbio_correct.mp4', 'vid/Milo_nonbio_spill.mp4', 'vid/Milo_nonbio_spill.mp4', 
     'vid/Theo_bio_correctv2.mp4', 'vid/Theo_nonbio_correct.mp4', 'vid/Theo_bio_spill.mp4', 'vid/Theo_nonbio_spill.mp4'];
 
-// Preload videos. File names are case sensitive.
+// Preload videos. 
     var preload = {
         type: jsPsychPreload,
         video: vid,
@@ -100,25 +104,31 @@ window.addEventListener('beforeunload', function (event) {
 // Participant Information about Camera.
       var camera_instructions = {
         type: jsPsychHtmlButtonResponse,
-        stimulus:'<p class="instruction">Welcome! In order to participate, you must allow the experiment to use your camera.</p><p class="instruction">You will be prompted to do this on the next screen.</p><p class="instruction">If you do not wish to allow the use of your camera, you cannot participate.</p><p class="instruction">After you give permission to turn on your camera, it may take up to 30 seconds for the camera to initialise.</p>',
+        stimulus:'<p class="instruction">Welcome! In order to participate, you must allow the experiment to use your camera.</p><p class="instruction">You will be prompted to do this on the next screen.</p><p class="instruction">If you do not wish to allow the use of your camera, you cannot participate.</p><p class="instruction">After you give permission to turn on your camera, it may take up to 30 seconds for the camera to initialise.</p><p></p>',
         choices: ['Got it']
       }
 
 // Activate camera. 
       var init_camera = {
         type: jsPsychWebgazerInitCamera, 
-        instructions: '<h4 class="instruction">Head movement</h4><p class="instruction">Please center your face in the box and look directly towards the camera.</p><p class="instruction">Throughout the experiment, please keep your head reasonably still.</p><p class="instruction"> Make sure you\’re seated comfortably.</p><h4 class="instruction">Lighting</h4><p class="instruction">Are you in a well-lit room?</p><p class="instruction">If the light is behind you, making your face very dark, then please adjust your seating position.</p><p class="instruction">The camera needs to detect your eye movement.</p><p class="instruction">When your face is centered in the box and the box is green, please click OK to continue.</p>',
-        button_text: 'OK Continue'
+        instructions: '<h4 class="heading">Limit head movement</h4><p class="instruction">Please center your face in the box and look directly towards the camera.</p><p class="instruction">Throughout the experiment, please keep your head reasonably still.</p><p class="instruction"> Make sure you\’re seated comfortably for the next 10 minutes.</p><h4 class="heading">Lighting</h4><p class="instruction">Are you in a well-lit room?</p><p class="instruction">If the light is behind you, making your face very dark, please adjust your seating position.</p><p class="instruction">The camera needs good lighting to be able to detect your eye movement.</p><p class="instruction">When your face is centered in the box and the box is green, click Continue.</p>',
+        button_text: 'Continue'
+      }
+
+      var close_apps = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus:'<43 class="heading">Close non-essential apps</h4><p class="instruction">To maximise internet speed, please close any non-essential software and browser windows. If any apps will give you pop-up notifications, please also close them now. </p>',
+        choices: ['OK']
       }
 
 // Particiant information about calibration.
       var calibration_instructions = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: '<h4 class="instruction">Eye-tracking setup</h4><p class="instruction">Now we will calibrate the eye-tracking software to make sure it can detect where you are looking.</p><p class="instruction">You will see a series of dots appear on the screen. <strong>Please look at each dot and click on it.</strong></p>',
+        stimulus: '<h3 class="heading">Eye-Tracking Setup</h3><p class="instruction">Now we will calibrate the eye-tracking software to make sure it can detect where you are looking.</p><p class="instruction">You will see a series of dots appear on-screen. <p class="instruction">Please <strong>look at each dot and click on it</strong>.</p><p></p>',
         choices: ['Let\'s go!']
       }
 
-// Calibration. 13 points following Semmelmann and Weigelt (2018).
+// TODO: Calibration. 13 points following Semmelmann and Weigelt (2018). 
       var calibration = {
         type: jsPsychWebgazerCalibrate,
         calibration_points: [
@@ -126,15 +136,15 @@ window.addEventListener('beforeunload', function (event) {
           [65,35], [20, 50], [50, 50], [80, 50], 
           [35, 65], [65, 65], [20, 80], [50, 80], [80, 80]
         ],
-        repetitions_per_point: 1,
+        repetitions_per_point: 2,
         randomize_calibration_order: true
       }
 
       var validation_instructions = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: '<p class="instruction">Now we will measure the accuracy of the calibration.</p><p class="instruction">Look at each dot as it appears on the screen.</p>' + '<p class="instruction" style="font-weight: bold;">You do not need to click on the dots this time.</p>',
+        stimulus: '<p class="instruction">Now we will measure the accuracy of the calibration.</p><p class="instruction">Look at each dot as it appears on the screen.</p>' + '<p class="instruction" style="font-weight: bold;">No need to click on the dots this time.</p><p></p>',
         choices: ['OK'],
-        post_trial_gap: 800
+        post_trial_gap: 1000
       }
 
       var validation = {
@@ -145,6 +155,7 @@ window.addEventListener('beforeunload', function (event) {
         roi_radius: 200,
         time_to_saccade: 1000,
         validation_duration: 2000,
+        show_validation_data: true,
         data: {
           task: 'validate'
         }
@@ -152,48 +163,54 @@ window.addEventListener('beforeunload', function (event) {
 
       var recalibrate_instructions = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: '<p class="instruction">The accuracy of the calibration is a little low.</p><p class="instruction">We will try calibrating one more time.</p><p class="instruction">On the next screen, look at the dots and click on them.</p>',
+        stimulus: '<p class="instruction">The accuracy of the calibration is a little low.</p><p class="instruction">We will try calibrating one more time.</p><p class="instruction">On the next screen, look at the dots and click on them.</p><p></p>',
         choices: ['OK'],
       }
 
       var recalibrate = {
         timeline: [recalibrate_instructions, calibration, validation_instructions, validation],
-        conditional_function: function(){
-          var validation_data = jsPsych.data.get().filter({task: 'validate'}).values()[0];
-          return validation_data.percent_in_roi.some(function(x){
-            var minimum_percent_acceptable = 80;
-            return x < minimum_percent_acceptable;
-          });
-        },
         data: {
-          phase: 'recalibration'
-        }
+          task: 'recalibrate'
+        }, 
+        conditional_function: function(){
+            // get the data
+            var validation_data = jsPsych.data.get().filter({task: 'validate'}).values()[0];
+            var percent_arr = validation_data.percent_in_roi;
+            // this is how to calculate average in javascript
+            const average = array => array.reduce((a, b) => a + b) / array.length;
+            // print in console to check
+ //           console.log(average(percent_arr));
+            // minimum acceptable accuracy is 70%, 
+            // if average < 70, will evaluate to true, recalibrate will run
+            // if average > 70, then already accurate enough, recalibrate will not run
+            return (average(percent_arr) < 50);
+            }, 
       }
 
       var calibration_done = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: '<p class="instruction">Great, we are done with calibration!</p>',
+        stimulus: '<p class="instruction">Great, we are done with calibration!</p><p></p>',
         choices: ['OK']
       }
 
 // Original thinking was to set video width and height to be responsive, leaving 20% screen width & height as border. 
-// However, jsPsych's video-keyboard-response plugin does not offer responsive sizing of stimuli. 
+// However, jsPsych's video-keyboard-response plugin does not offer responsive sizing of stimuli (not out-of-the-box anyway). 
 
     var practice_instructions = {
         type: jsPsychHtmlButtonResponse, 
-        stimulus: '<p class="instruction">During the experiment, you will watch some videos.</p><p class="instruction">While you watch, please try to see whether the action is performed correctly or erroneously.</p><p class="instruction">Place your hands on the keyboard, and press F for correct and J for error.</p><p class="instruction">Please press as quickly as possible. You don’t have to wait till the end.</p><p class ="instruction">On many computer keyboards, F and J keys have a notch on them, so you don’t have to can keep watching the videos without having to look down at the keyboard.</p>', 
+        stimulus: '<h3 class="heading">Practice Round</h3><p class="instruction">During the experiment, you will watch some videos.</p><p class="instruction">While you watch, see whether you think the action is performed <strong>correctly</strong> or <strong>erroneously.</strong></p><p class="instruction">Place both your hands on the keyboard, and <strong>press F for correct</strong> and <strong>J for error</strong>.</p><p class="instruction">Please press as fast as possible! You don’t have to wait till the end of the video.</p><img src="img/f_and_j_keys.png" width="400" height="233">', 
         choices:['OK']
     }
 
     var practice = {
           type: jsPsychVideoKeyboardResponse, 
           stimulus: ['vid/Practice_dog.mp4'], width: 1080, height: 607.5, 
-          choices: ['f', 'j'], trial_duration: 2000, controls: false
+          choices: ['f', 'j'], trial_duration: 9000, controls: false
       }; 
     
     var practice_wrap_begin = {
         type: jsPsychHtmlKeyboardResponse,
-        stimulus: '<p class="instruction">That was easy!</p><p class="instruction">We will start the experiment in the next screen.</p><p class="instruction"><strong>Remember to press F for correct or J for error, as quickly as possible.</strong></p><p class="instruction">When you are ready, press any key to start.</p>'
+        stimulus: '<p class="instruction">That was easy!</p><p class="instruction">We will start the experiment in the next screen.</p><p class="instruction"><strong>Remember to press F for correct or J for error, as quickly as possible.</strong></p><p class="instruction">If you forget to press in some videos, no problem, just remember to do so in the later videos.</p><p class="instruction">When ready, <strong>press any key to start.</strong></p><p></p>'
       }
       
     var procedure = {
@@ -202,9 +219,8 @@ window.addEventListener('beforeunload', function (event) {
             type: jsPsychVideoKeyboardResponse,
             stimulus: jsPsych.timelineVariable('vid'),
             width: 1080, height: 607.5,        
-            choices: ['f','j'], trial_duration: 2000,
+            choices: ['f','j'], trial_duration: 3000,
             response_ends_trial: false, 
-            controls: false, 
             extensions: [
                {
                  type: jsPsychExtensionWebgazer,
@@ -227,20 +243,38 @@ window.addEventListener('beforeunload', function (event) {
             { vid: ['vid/Theo_bio_spill.mp4'] }, { vid: ['vid/Theo_nonbio_spill.mp4'] }
         ], 
         randomize_order: true,
-        sample: {
-            type: 'fixed-repetitions', 
-            size: 3 
-        },
+//        sample: {
+//            type: 'fixed-repetitions', 
+//            size: 3 
+//        },
+    }
+
+    var short_break = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p><span class="emoji_color">&#127881; </span><span class="emoji_gray">&#127881; &#127881;</span></p><p class="instruction">You just completed the first of 3 blocks! Remember to press F for correct and J for error.</p><p class="instruction">This is a short break. The next block will automatically start after 20 seconds. </p>', 
+      trial_duration: 20000,
+      choices: ['Cut short the break and keep going']
+    }
+
+    var short_break2 = {
+      type: jsPsychHtmlButtonResponse, 
+      stimulus: '<p><span class="emoji_color">&#127881; &#127881;</span><span class="emoji_gray"> &#127881;</span></p><p class="instruction">Completed the 2nd of 3 blocks! Remember to press F for correct and J for error.</p><p class="instruction">The next block will automatically start in 20 seconds.</p>', 
+      trial_duration: 20000, 
+      choices: ['Cut short the break and keep going']
+    }
+
+    var end_experiment = {
+      type: jsPsychHtmlButtonResponse,
+      stimulus: '<p><span class="emoji_color">&#127881; &#127881; &#127881;</span></p><p class="instruction">You have completed the experiment. Next will be 8 brief questions.</p>',
+      choices: ['Start saving my data.']
     }
 
 // End connection to Pavlovia. Make sure data is stored 
 // See line 145. https://gitlab.pavlovia.org/tpronk/jsPsych_SimpleReactionTime
-
-    
     var pavlovia_finish = {
             type:  jsPsychPavlovia,
             command: "finish",
-            participantId: "JSPSYCH-DEMO"
+            participantId: "TESTING_CHROME",
 //                  dataFilter: function(data) {
 //                      // Printing the data received from jsPsych.data.get().csv()
 //                    console.log(jsPsych.data.get().json());
@@ -249,13 +283,15 @@ window.addEventListener('beforeunload', function (event) {
     
     jsPsych.run([
         pavlovia_init, preload, browser_check,
-        camera_instructions, init_camera, 
-        calibration_instructions, calibration, validation_instructions, validation, recalibrate, calibration_done,
+        camera_instructions, init_camera, close_apps,
+        calibration_instructions, calibration, validation_instructions, validation, 
+        recalibrate, calibration_done, 
         practice_instructions, practice, practice_wrap_begin, 
         procedure, 
+        short_break, procedure, short_break2, procedure, 
+        end_experiment,
         pavlovia_finish
       ]);
-
       
     </script>
   </body>
